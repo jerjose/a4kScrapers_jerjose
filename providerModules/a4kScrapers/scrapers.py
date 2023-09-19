@@ -5,6 +5,7 @@ import re
 from string import capwords
 from . import source_utils
 from .utils import normalize, safe_list_get, get_caller_name, beautifulSoup
+from providerModules.a4kScrapers import core
 
 class NoResultsScraper(object):
     def movie_query(self, title, year, auto_query=True, single_query=False, caller_name=None):
@@ -38,13 +39,17 @@ class GenericTorrentScraper(object):
 
     def _parse_torrent(self, row, row_tag):
         magnet_link = self.parse_magnet(row, row_tag)
+        core.tools.log("jerrin _parse_torrent magnet_link " + str(magnet_link), 'notice')
 
         if magnet_link is not None:
-            torrent = lambda: None
-            torrent.magnet = magnet_link
-            torrent.title = safe_list_get(torrent.magnet.split('dn='), 1)
-            torrent.size = self.parse_size(row)
-            torrent.seeds = self.parse_seeds(row)
+            torrent = {}
+            #torrent = lambda: None
+            torrent["magnet"] = magnet_link
+            torrent["hash"] = re.findall(r'btih:(.*?)\&', magnet_link)[0]
+            torrent["title"] = safe_list_get(re.findall(r'dn=(.*)\.\w\w\w&tr=',magnet_link), 0)
+            torrent["size"] = self.parse_size(row)
+            torrent["seeds"] = self.parse_seeds(row)
+            core.tools.log("jerrin _parse_torrent torrent " + str(torrent), 'notice')
             return torrent
 
         return None
@@ -63,6 +68,11 @@ class GenericTorrentScraper(object):
         if row_tag == '<dl': # torrentz2
             matches = safe_list_get(re.findall(r'href=\/([0-9a-zA-Z]*)>(.*?)<', row), 0, [])
             magnet_links = build_magnet(matches)
+        elif row_tag == ',': # 1tamilmv
+            matches = re.findall(r'href=\"(magnet.*)\"\srel',row)
+            magnet_links.append(matches[0])
+            core.tools.log("jerrin _parse_magnet magnet_links " + str(magnet_links), 'notice')
+            core.tools.log("jerrin _parse_magnet len magnet_links " + str(len(magnet_links)), 'notice')
         else:
             magnet_links = re.findall(r'(magnet:\?.*?&dn=.*?)[&"]', row)
             if len(magnet_links) == 0: # lime

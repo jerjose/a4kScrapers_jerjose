@@ -164,6 +164,18 @@
               { "base": "https://yts.mx" }
           ]
       },
+      "tamilblasters": {
+          "search": "/index.php?/search/&search_and_or=and&search_in=titles&sortby=relevancy&q=",
+          "domains": [
+              { "base": "https://www.1tamilblasters.lat/" }
+          ]
+      },
+      "1tamilmv": {
+          "search": "/index.php?/search/&search_and_or=and&search_in=titles&sortby=relevancy&q=",
+          "domains": [
+              { "base": "https://www.1tamilmv.nexus/" }
+          ]
+      },
       "-zooqle": { "search": "", "domains": [{ "base": "" }] }
   },
   "hosters": {
