@@ -39,17 +39,14 @@ class GenericTorrentScraper(object):
 
     def _parse_torrent(self, row, row_tag):
         magnet_link = self.parse_magnet(row, row_tag)
-        core.tools.log("jerrin _parse_torrent magnet_link " + str(magnet_link), 'notice')
 
         if magnet_link is not None:
-            torrent = {}
-            #torrent = lambda: None
-            torrent["magnet"] = magnet_link
-            torrent["hash"] = re.findall(r'btih:(.*?)\&', magnet_link)[0]
-            torrent["title"] = safe_list_get(re.findall(r'dn=(.*)\.\w\w\w&tr=',magnet_link), 0)
-            torrent["size"] = self.parse_size(row)
-            torrent["seeds"] = self.parse_seeds(row)
-            core.tools.log("jerrin _parse_torrent torrent " + str(torrent), 'notice')
+            torrent = lambda: None
+            torrent.magnet = magnet_link
+            torrent.hash = re.findall(r'btih:(.*?)\&', magnet_link)[0]
+            torrent.title = safe_list_get(re.findall(r'dn=(.*)\.\w\w\w&tr=', magnet_link), 0)
+            torrent.size = self.parse_size(row)
+            torrent.seeds = self.parse_seeds(row)
             return torrent
 
         return None
@@ -71,8 +68,6 @@ class GenericTorrentScraper(object):
         elif row_tag == ',': # 1tamilmv
             matches = re.findall(r'href=\"(magnet.*)\"\srel',row)
             magnet_links.append(matches[0])
-            core.tools.log("jerrin _parse_magnet magnet_links " + str(magnet_links), 'notice')
-            core.tools.log("jerrin _parse_magnet len magnet_links " + str(len(magnet_links)), 'notice')
         else:
             magnet_links = re.findall(r'(magnet:\?.*?&dn=.*?)[&"]', row)
             if len(magnet_links) == 0: # lime
@@ -87,7 +82,7 @@ class GenericTorrentScraper(object):
                         if len(match) > len(title_match) and match[0] not in ['<', '>', '%', '[', ']']:
                             title_match = match
                     if title_match != '':
-                        magnet_links[0] += '&dn=%s' % title_match 
+                        magnet_links[0] += '&dn=%s' % title_match
                     else:
                         magnet_links = []
 
@@ -243,7 +238,7 @@ class MultiUrlScraper(object):
             result = scraper.movie_query(title, year, caller_name)
             for item in result:
                 results.append(item)
-        
+
         return results
 
     def episode_query(self, simple_info, auto_query=True, single_query=False, caller_name=None):

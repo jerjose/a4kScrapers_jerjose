@@ -8,11 +8,7 @@ class sources(core.DefaultSources):
 
     def _search_request(self, url, query):
         query = core.quote(" ".join([self._title,self._year]))
-        core.tools.log("jerrin tamilblasters query " + str(query), 'notice')
-        core.tools.log("jerrin tamilblasters url " + url.base + url.search + query,'notice')
         response = self._request.get(url.base + url.search + query)
-
-        core.tools.log("jerrin tamilblasters response " + str(response.text), 'notice')
 
         if response.status_code != 200:
             return []
