@@ -43,14 +43,9 @@ class sources(core.DefaultSources):
         response = self._request.get(url.base + url.search + query)
 
         core.tools.log("jerrin 1tamilmv response " + str(response), 'notice')
-        core.tools.log("jerrin 1tamilmv response " + str(response.text), 'notice')
 
         if response.status_code != 200:
             return []
-
-        #type(response).text = str(self._extract_movielinks(response))
-
-        core.tools.log("jerrin 1tamilmv response " + str(response.text), 'notice')
 
         return response
 
@@ -79,8 +74,6 @@ class sources(core.DefaultSources):
 
         # Find all the elements that contain the data you want
         links = soup.find_all('a', href=re.compile('.*'.join(self._title_arr) + '.*' + self._year,re.IGNORECASE))
-
-        core.tools.log("jerrin 1tamilmv links " + str(links),'notice')
 
         # Loop through the links elements and print their href attribute
         for link in links:

@@ -64,6 +64,9 @@ def _get_movie_query(scraper):
     elif scraper == 'scenerls':
         movie_title = 'Alita Battle Angel'
         movie_year = '2019'
+    elif scraper == '1tamilmv':
+        movie_title = 'Vaashi'
+        movie_year = '2022'
     else:
         movie_title = 'Fantastic Beasts and Where to Find Them'
         movie_year = '2016'
