@@ -44,7 +44,7 @@ class GenericTorrentScraper(object):
             torrent = lambda: None
             torrent.magnet = magnet_link
             torrent.hash = re.findall(r'btih:(.*?)\&', magnet_link)[0]
-            torrent.title = safe_list_get(re.findall(r'dn=(.*)\.\w\w\w&tr=', magnet_link), 0)
+            torrent.title = safe_list_get(torrent.magnet.split('dn='), 1)
             torrent.size = self.parse_size(row)
             torrent.seeds = self.parse_seeds(row)
             return torrent
