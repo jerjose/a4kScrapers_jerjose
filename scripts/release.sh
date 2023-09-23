@@ -2,10 +2,10 @@
 
 token=$1
 ver=$(echo "$2" | sed "s/release: //")
-user="a4k-openproject"
-repo="a4kScrapers"
+user="jerjose"
+repo="a4kScrapers_jerjose"
 tag_ver="${ver#?}"
-tag="a4kScrapers-$tag_ver"
+tag="a4kScrapers_jerjose-$tag_ver"
 api="https://api.github.com/repos/$user/$repo"
 
 generate_release_data()
