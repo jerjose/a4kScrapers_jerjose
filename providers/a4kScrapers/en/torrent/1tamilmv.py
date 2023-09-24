@@ -13,7 +13,7 @@ class sources(core.DefaultSources):
         return super(sources, self)._get_scraper(title, custom_filter=self._filter)
 
     def _info(self, el, url, torrent):
-        torrent['size'] = el.size
+        torrent['size'] = core.source_utils.de_string_size(el.size)
         torrent['seeds'] = el.seeds
         torrent['magnet'] = el.magnet
         torrent['hash'] = el.hash
@@ -40,6 +40,17 @@ class sources(core.DefaultSources):
         if response.status_code != 200:
             return []
 
+        rsp_data = self._extract_movielinks(response)
+
+        if not rsp_data:
+            self._alternate_search = True
+            search = "/index.php?/search/&search_and_or=or&search_in=titles&sortby=relevancy&q="
+            response = self._request.get(url.base + search + query)
+            rsp_data = self._extract_movielinks(response)
+
+        if not rsp_data:
+            return []
+
         return response
 
     def movie(self, title, year, imdb=None, **kwargs):
@@ -48,6 +59,7 @@ class sources(core.DefaultSources):
         self._title_first_word = self._title_arr[0]
         self._year = str(year).strip()
         self._imdb = imdb
+        self._alternate_search = False
         return super(sources, self).movie(self._title, self._year, self._imdb)
 
     def _searchable_title(self, title):
@@ -64,7 +76,10 @@ class sources(core.DefaultSources):
 
         # Find all the elements that contain the data you want
         # movie links belong to topic
-        links = soup.find_all('a', href=re.compile('topic.*' + '.*'.join(self._title_arr) + '.*' + self._year,re.IGNORECASE))
+        if not self._alternate_search:
+            links = soup.find_all('a', href=re.compile('topic.*' + '.*'.join(self._title_arr) + '.*' + self._year, re.IGNORECASE))
+        else:
+            links = soup.find_all('a', href=re.compile('topic.*' + '(' + '|'.join(self._title_arr) + ')' + '.*' + self._year, re.IGNORECASE))
 
         # Loop through the links elements and print their href attribute
         for link in links:
@@ -73,7 +88,6 @@ class sources(core.DefaultSources):
                 rsp = self._request.get(link.get('href'))
                 bs = BeautifulSoup(rsp.content, "html.parser")
                 # Find all the elements that contain the magnetic links
-                #mg_lns = bs.find_all("a", href=re.compile('^magnet.*' + self._title_first_word, re.IGNORECASE))
                 mg_lns = bs.find_all("a", href=re.compile('^magnet', re.IGNORECASE))
                 for ln in mg_lns:
                     if (ln.has_attr('href')):
