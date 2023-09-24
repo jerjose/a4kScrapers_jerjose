@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 
 from providerModules.a4kScrapers import core
 from bs4 import BeautifulSoup
@@ -45,6 +46,7 @@ class sources(core.DefaultSources):
         if not rsp_data:
             self._alternate_search = True
             search = "/index.php?/search/&search_and_or=or&search_in=titles&sortby=relevancy&q="
+            time.sleep(5)
             response = self._request.get(url.base + search + query)
             rsp_data = self._extract_movielinks(response)
 
